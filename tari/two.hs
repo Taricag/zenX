@@ -12,7 +12,6 @@ null' [_]="false"
 take' 0 _=[]
 take' _ []=[]
 take' n (x:xs)= x : take' (n-1) (xs)
-
 --pembatas
 
 drop' 0 (x:xs) = (x:xs)
@@ -22,17 +21,9 @@ drop' n (x:xs) = drop' (n-1) (xs)
 --pembatas
 
 fst' (a,b) = a
-
 --pembatas
 
 snd' (a,b) = b
-
---pembatas
-
-sqr  x = x*x
-kuadrat a b = a^b
-kurang a b = a-b
-
 
 --pembatas
 
@@ -41,8 +32,12 @@ map' f[]= []
 
 --pembatas
 
+filter' (f) [] = []
+filter' (f) (x:xs)
+  |f x == True = x : filter' f (xs)
+  |f x == False = filter' f (xs)
 
-
+--pembatas
 
 delete' n (x:xs)
   |n==x = xs
@@ -51,28 +46,48 @@ delete' n (x:xs)
 
 --pembatas
 
---delete all'
+deleteall' n (x:xs)
+  |n==x = deleteall' n (xs)
+  |n/=x = x : deleteall' n (xs)
+deleteall' n [] = []
 
 --pembatas
 
---foldl'
+foldl'' f n (x:xs) = f n (product'(x:xs))
 
 --pembatas
 
---foldl1'
+foldl1'' f [x] = x
+foldl1'' f (x:xs)=  f x (foldl1' f (xs))
+
+
+-- foldl1 (-) [2,2,2,2] = - 2 ffoldl fx
 
 --pembatas
 
---zip'
+zip' (x':xs') (x:xs) = (x',x) : zip' (xs') (xs)
+zip' [] (x:xs) = []
+zip' (x:xs) [] = []
+zip' [] [] = []
+
 
 --pembatas
 
---zipWith'
+zipWith' f [] (x:xs) = []
+zipWith' f (x':xs') [] = []
+zipWith' f [] [] = []
+zipWith' f (x':xs') (x:xs)= f x' x : zipWith' f (xs') (xs)
 
 --pembatas
 
---nth'
+nth  (x:xs) 0 = (x)
+nth (x:xs) n = nth (xs) (n-1)
 
+--pembatas
+
+--scanl' f n (x:xs)= n : f x : f xs
+--f xs =
+--
 --pembatas
 
 --scanl1
@@ -91,25 +106,29 @@ notElem' n (x:xs)
   |n /= x = notElem' n (xs)
   |n==x = False
 
-
 --pembatas
 
 head' (x:xs) = x
+
+--pembatas
 
 length' [] = 0
 length' (x:xs) = 1 + length' (xs)
 
 --pembatas
 
---reverse'
+reverse' [] = []
+reverse' (x:xs)= reverse' (xs) ++ x :[]
+
 
 --pembatas
 
 last' [x] = x
 last' (x:xs) = last' (xs)
+
 --pembatas
 
-tail' (x:xs) = xs
+tail' (x:xs) = (xs)
 
 --pembatas
 
@@ -118,19 +137,20 @@ init' (x:xs)= x : init' (xs)
 
 --pembatas
 
-min' a b
-  |a<b = a
-  |b<a = b
-
---pembatas
-
 max' a b
   |a<b = b
-  |b<a = a
+  |otherwise = a
 
 --pembatas
 
---concat'
+min' a b
+  |a<b = a
+  |otherwise = b
+
+--pembatas
+
+concat' [x] = x
+concat' (x:xs) = x ++ concat' xs
 
 --pembatas
 
@@ -139,32 +159,111 @@ intersperse' n [] = []
 
 --pembatas
 
-intercalate' (x:xs) [(x:xs)] = x : xs:x: intercalate' (x:xs) [(xs)]
+--intercalate' [] (x':xs') = x':xs'
 intercalate' (x:xs) [[]] =[]
-noooo!!!!
+--intercalate' (x:xs) [[x']]= [x']
+intercalate' (x:xs)(x':xs') =  x' ++ (x:xs) ++ intercalate' (x:xs) xs'
+
+--intrcalate [1,1] [[2,2],[3,3],[4,4]] = [2,2] ++ [1,1]++ [3,3] ++[1,1] ++
+ --pembatas
+
+and' [] =True
+and' (fx:fxs)
+  |fx== False= False
+  |fx == True = and' (fxs)
+
+--pembata
+
+or' [] =False
+or' (fx:fxs)
+  |fx == True = True
+  |fx == False = or' (fxs)
 
 --pembatas
 
---and'
+zip3' (x':xs') (x'':xs'')(x:xs) = (x',x'',x) : zip3' (xs') (xs'') (xs)
+zip3' [] (x'':xs'')(x:xs) =[]
+zip3' (x':xs') [](x:xs)=[]
+zip3' (x':xs') (x'':xs'')[] =[]
+zip3' [] [] (x:xs)=[]
+zip3' [] (x'':xs'')[] = []
+zip3' (x':xs') [][] = []
+zip3' [] [] [] =[]
+
 
 --pembatas
-
---or'
-
---pembatas
-
---zip3'
-
---pembats
 
 sum' [] = 0
 sum' (x:xs) = x + sum' xs
 
 -- pembatas
 
-filter' (f) (x:xs)
-  |f x == True = x : filter' f (xs)
-  |f x == False = filter' f (xs)
-filter' (f) [] = []
+product' [] = 1
+product' (x:xs) = x*product' (xs)
 
 --pembatas
+
+--words'
+
+--pembatas
+
+--words' "" = [x]
+--words' "" = x : words' xs
+
+
+--pembatas
+
+lines' "a" = [" a "]
+
+unlines' ["x"] = "x \n"
+
+--pembatas
+
+--unwords
+
+--pembatas
+
+takeWhile' f [] = []
+takeWhile' f (x:xs)
+  | (f x)== True =  x : takeWhile' f (xs)
+  | (f x)== False = takeWhile' f (xs)
+
+--pembatas
+
+dropWhile' f [] = []
+dropWhile' f (x:xs)
+  | (f x) == True = dropWhile' f (xs)
+  | (f x) == False = x : dropWhile' f (xs)
+
+--pembatas
+
+--concatMap
+
+--pembatas
+
+all' f [] = True
+all' f (x:xs)
+  | (f x) == False = False
+  | (f x) == True = all' f (xs)
+
+--pembatas
+
+any' f [] = False
+any' f (x:xs)
+  | (f x) == True =True
+  | (f x) == False = any' f (xs)
+
+--pembatas
+
+insert' n [] = [n]
+insert' n (x:xs)
+  |n <= x = n : (x:xs)
+  |n > x = x : insert' n (xs)
+
+--pembatas
+
+zipWith3' f (x':xs') (x'':xs'')(x:xs) =(f x' x'' x) : zipWith3' f (xs') (xs'')(xs)
+
+--fungsi
+krg a b = a-b
+sqr a b = a^b
