@@ -4,14 +4,15 @@ import Data.List
 
 --1.a
 
-null' [] ="true"
-null' [_]="false"
+null' [] = True
+null' [_]= False
 
 --pembatas
 
 take' 0 _=[]
 take' _ []=[]
 take' n (x:xs)= x : take' (n-1) (xs)
+
 --pembatas
 
 drop' 0 (x:xs) = (x:xs)
@@ -21,6 +22,7 @@ drop' n (x:xs) = drop' (n-1) (xs)
 --pembatas
 
 fst' (a,b) = a
+
 --pembatas
 
 snd' (a,b) = b
@@ -35,7 +37,7 @@ map' f[]= []
 filter' (f) [] = []
 filter' (f) (x:xs)
   |f x == True = x : filter' f (xs)
-  |f x == False = filter' f (xs)
+  |otherwise = filter' f (xs)
 
 --pembatas
 
@@ -53,15 +55,13 @@ deleteall' n [] = []
 
 --pembatas
 
-foldl'' f n (x:xs) = f n (product'(x:xs))
+foldl'' f n [] = n
+foldl'' f n (x:xs) = f (foldl'' f n xs) x
 
 --pembatas
 
 foldl1'' f [x] = x
-foldl1'' f (x:xs)=  f x (foldl1' f (xs))
-
-
--- foldl1 (-) [2,2,2,2] = - 2 ffoldl fx
+foldl1'' f (x:xs)= f x  (foldl1'' f (xs))
 
 --pembatas
 
@@ -85,26 +85,29 @@ nth (x:xs) n = nth (xs) (n-1)
 
 --pembatas
 
---scanl' f n (x:xs)= n : f x : f xs
---f xs =
---
+scanl'' f n [] =[n]
+scanl'' f n (x:xs)= [n] ++ scanl'' f (f n x) xs
+
 --pembatas
 
---scanl1
+--scanl1'' f []= []
+--scanl1'' f [x]= [x]
+-- canl1'' f (x:xs) =
+
 
 --pembatas
 
 elem' n[]= False
 elem' n (x:xs)
   |n /= x = elem' n (xs)
-  |n==x = True
+  |otherwise= True
 
 --pembatas
 
 notElem' n[]= True
 notElem' n (x:xs)
   |n /= x = notElem' n (xs)
-  |n==x = False
+  |otherwise =  False
 
 --pembatas
 
@@ -159,25 +162,24 @@ intersperse' n [] = []
 
 --pembatas
 
---intercalate' [] (x':xs') = x':xs'
-intercalate' (x:xs) [[]] =[]
---intercalate' (x:xs) [[x']]= [x']
+intercalate' [] [x'] = x'
+intercalate' [] (x':xs') = x' ++ intercalate' [] xs'
+intercalate' (x:xs) [x']= x'
 intercalate' (x:xs)(x':xs') =  x' ++ (x:xs) ++ intercalate' (x:xs) xs'
 
---intrcalate [1,1] [[2,2],[3,3],[4,4]] = [2,2] ++ [1,1]++ [3,3] ++[1,1] ++
  --pembatas
 
 and' [] =True
 and' (fx:fxs)
   |fx== False= False
-  |fx == True = and' (fxs)
+  |otherwise = and' (fxs)
 
 --pembata
 
 or' [] =False
 or' (fx:fxs)
   |fx == True = True
-  |fx == False = or' (fxs)
+  |otherwise = or' (fxs)
 
 --pembatas
 
@@ -203,55 +205,67 @@ product' (x:xs) = x*product' (xs)
 
 --pembatas
 
---words'
+words' [x] = [[x]]
+words' (x:xs)
+  |x == ' ' = words' (xs)
+  |x == '\n' =  words' (xs)
+  |otherwise = [x] : words' (xs)
+
+  --(masih salah)  --words' "we d a \n g ja he"
+  --["w","e","d","a","g","j","a","h","e"]
+  --malah gini
 
 --pembatas
 
---words' "" = [x]
---words' "" = x : words' xs
+lines' []= [[]]
+lines' (x:xs)
+  |x == '\n' = [] : lines' (xs)
+  |otherwise = x : lines' (xs)
 
 
---pembatas
-
-lines' "a" = [" a "]
-
-unlines' ["x"] = "x \n"
 
 --pembatas
 
---unwords
+unlines' [] = ""
+unlines' (x:xs) = x ++ "\n" ++ (unlines' xs)
+
+--pembatas
+
+unwords' [] = ""
+unwords' (x:xs) = x ++ unwords (xs)
 
 --pembatas
 
 takeWhile' f [] = []
 takeWhile' f (x:xs)
   | (f x)== True =  x : takeWhile' f (xs)
-  | (f x)== False = takeWhile' f (xs)
+  | (f x)== False = []
 
 --pembatas
 
 dropWhile' f [] = []
 dropWhile' f (x:xs)
   | (f x) == True = dropWhile' f (xs)
-  | (f x) == False = x : dropWhile' f (xs)
+  | (f x) == False = (x:xs)
 
 --pembatas
 
---concatMap
+concatMap' f [x] = f x ++ []
+concatMap' f (x:xs) = f x ++  concatMap' f (xs)
 
 --pembatas
 
 all' f [] = True
 all' f (x:xs)
   | (f x) == False = False
-  | (f x) == True = all' f (xs)
+  | otherwise = all' f (xs)
 
 --pembatas
 
 any' f [] = False
 any' f (x:xs)
   | (f x) == True =True
-  | (f x) == False = any' f (xs)
+  | otherwise = any' f (xs)
 
 --pembatas
 
@@ -264,6 +278,71 @@ insert' n (x:xs)
 
 zipWith3' f (x':xs') (x'':xs'')(x:xs) =(f x' x'' x) : zipWith3' f (xs') (xs'')(xs)
 
+--pembatas
+
+nub' []=[]
+nub' (x:xs) = [x] ++ nub' (deleteall' x (xs))
+
+--pembatas
+
+sort' [] =[]
+sort' (x:xs) =minimum (x:xs) : sort' (delete' (minimum (x:xs)) (x:xs))
+
+--pembatas
+
+minimum' [x] = x
+minimum' (x:xs) = minimum' ((min' x (head' xs)) : tail' xs)
+
+--pembatas
+
+maximum' [x] = x
+maximum' (x:xs) = maximum' ((max' x(head' xs )) : tail' xs)
+
+--pembatas
+
+inits' [] = [[]]
+inits' (x:xs) =  inits' (init' (x:xs)) ++ [x:xs]
+
+--pembatas
+
+tails' [] = [[]]
+tails' (x:xs)= (x:xs) : tails' (xs)
+
+--pembatas
+
+union' (x:xs) (x':xs')= nub' ((x:xs) ++ (x':xs'))
+
+--pembatas
+
+intersect' [] (x':xs') = []
+intersect' (x:xs) (x':xs')= same x (x':xs') ++ intersect' (xs) (x':xs')
+  where same n [] = []
+        same x (x':xs')
+          |x == x' = [x']
+          |x /= x' = same x (xs')
+
+--pembatas
+
+group' [x] = [[x]]
+group' (x:xs) = [x] : group' (xs)
+
+--pembatas
+
+splitAt' n (x:xs) =(take' n (x:xs) ,  drop' n (x:xs))
+
+--pembatas
+
+partition' f (x:xs)= (filter' f (x:xs) , unfilter f (x:xs))
+  where unfilter (f) [] = []
+        unfilter (f) (x:xs)
+          |f x == True = unfilter f (xs)
+          |f x == False = x : unfilter f (xs)
+
+--pembatas
+
+replicate' 0 b = []
+replicate' a b = b : replicate' (a-1) b
+
+--pembatas
+
 --fungsi
-krg a b = a-b
-sqr a b = a^b
