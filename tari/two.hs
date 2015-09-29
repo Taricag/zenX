@@ -61,7 +61,10 @@ foldl'' f n (x:xs) = f (foldl'' f n xs) x
 --pembatas
 
 foldl1'' f [x] = x
-foldl1'' f (x:xs)= f x  (foldl1'' f (xs))
+foldl1'' f (x:xs)=  foldl1'' f (f (x) (head' xs): k(xs))
+
+
+
 
 --pembatas
 
@@ -89,11 +92,14 @@ scanl'' f n [] =[n]
 scanl'' f n (x:xs)= [n] ++ scanl'' f (f n x) xs
 
 --pembatas
+--bantuan
+k [] = []
+k (x:xs)=xs
 
---scanl1'' f []= []
---scanl1'' f [x]= [x]
--- canl1'' f (x:xs) =
+--pembatas
 
+scanl1'' f [x] = [x]
+scanl1'' f (x:xs) = x : scanl1'' f ((f x (head' xs)): k(xs) )
 
 --pembatas
 
@@ -157,8 +163,9 @@ concat' (x:xs) = x ++ concat' xs
 
 --pembatas
 
-intersperse' n (x:xs) = n : x : intersperse' n(xs)
 intersperse' n [] = []
+intersperse' n (x:xs) = n : x : intersperse' n(xs)
+
 
 --pembatas
 
@@ -217,22 +224,22 @@ words' (x:xs)
 
 --pembatas
 
-lines' []= [[]]
-lines' (x:xs)
-  |x == '\n' = [] : lines' (xs)
-  |otherwise = x : lines' (xs)
+--lines' []= [[]]
+--lines' (x:xs)
+--x == '\n' = [] : lines' (xs)
+---otherwise = x : lines' (xs)
 
 
 
 --pembatas
 
 unlines' [] = ""
-unlines' (x:xs) = x ++ "\n" ++ (unlines' xs)
+unlines' (x:xs) = x  ++ "\n" ++ (unlines' xs)
 
 --pembatas
 
-unwords' [] = ""
-unwords' (x:xs) = x ++ unwords (xs)
+unwords' [[x]] = [x]
+unwords' (x:xs)= x ++ " " ++ unwords' (xs)
 
 --pembatas
 
@@ -277,6 +284,7 @@ insert' n (x:xs)
 --pembatas
 
 zipWith3' f (x':xs') (x'':xs'')(x:xs) =(f x' x'' x) : zipWith3' f (xs') (xs'')(xs)
+zipWith3' f [] (x'':xs'')(x:xs) = []
 
 --pembatas
 
@@ -323,8 +331,10 @@ intersect' (x:xs) (x':xs')= same x (x':xs') ++ intersect' (xs) (x':xs')
 
 --pembatas
 
-group' [x] = [[x]]
-group' (x:xs) = [x] : group' (xs)
+group' [] = []
+group' (x:xs) = ([x] ++ takeWhile' (x==) (xs)) : group' (dropWhile' (x==)(xs))
+
+
 
 --pembatas
 
@@ -345,4 +355,20 @@ replicate' a b = b : replicate' (a-1) b
 
 --pembatas
 
---fungsi
+--fungsi-------------------------------------------------------------
+
+sumk lst = helper lst 0
+    where helper [] res = res
+          helper (x:xs) res = helper xs (x+res)
+
+sol1 lim = iter 1 0
+    where iter i result
+            | i > lim = result
+            | rem i 3 == 0 || rem i 5 == 0 = iter (i+1) (result + i)
+            | otherwise = iter (i+1) result
+fak x
+  |x==0 = 1
+  |x>0 = x * fak (x-1)
+
+fairy [] = []
+fairy (x:xs) = fak x : fairy xs
